@@ -11,6 +11,11 @@ app.use('/',express.static(__dirname))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:true}))
 
+var headersLine = {
+  'Content-Type': 'application/json',
+  'Authorization' : 'Bearer 1/B0JKb0SkxFfgDOBy1T+DeXfWwypgAc6SI00dT92fb2VGTGw92YrtpkP6O1P5uuz1F6K/2sECRTxbbKjDyJm/9pVDzc79VAJAfg2esirZ7RhlCzEQALWMqBuYj16UHxAtpL3E7+kwISr4laiwS8rwdB04t89/1O/w1cDnyilFU='
+}
+
 app.get('/helloworld',(req,res) => {
   //console.log(req);
   res.send("Hello world from serve port: " + app.get('port'));
@@ -21,7 +26,7 @@ app.listen(app.get('port'), function(){
 })
 
 /* webhook */
-app.post('/webhooks',(req,res) => {
+app.post('/webhook_2',(req,res) => {
 
   console.log(req.body.events[0].message);
 
@@ -31,11 +36,40 @@ app.post('/webhooks',(req,res) => {
   res.send('Hi');
 })
 
+/* Follow Event */
+app.post('/webhook',(req,res) => {
+  replyToken = req.body.events[0].replyToken;
+  userId = req.body.events[0].source.userId;
+
+  let body = JSON.stringify({
+    replyToken: replyToken,
+    messages:[{
+      type : 'text',
+      text: "thank you for coming"
+    }]
+  })
+
+  let eventsType = req.body.events[0].type;
+    if(eventsType == 'follow'){
+      request.post({
+        url:'https://api.line.me/v2/bot/message/reply',
+        headers: headersLine,
+        body: body
+      },(err,res,body) => {
+        if(res.statusCode == 400){
+          err_common();
+        }
+        console.log('err =' + err)
+        console.log('status ='+ res.statusCode)
+      })
+  }
+})
 
 
 
 /* INQ Product */
-app.post('/webhook',(req,res) => {
+app.post('/webhook_1',(req,res) => {
+  let UserId = req.body.events[0].source.userId;
   let headers = {
     'Content-Type': 'application/json',
     'Authorization' : 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImF1dGgiOiJST0xFX0FETUlOLFJPTEVfVVNFUiIsImV4cCI6MTU5OTk5NzAyN30.mF00sfcPgRdoqTyjOf3DVzVXRuKPBm0axyz-P0FT1g2-c5SIXWqj00FVwNT5D2IDRFfEXjLw7VQuPd63gosKzw'
@@ -46,7 +80,7 @@ app.post('/webhook',(req,res) => {
   
 
   request.post({
-    url:'http://apitest.ghb.co.th/api/openSaving/getParameters',
+    url:'https://exapi-sit.ghb.co.th:8443/api/openSaving/getParameters',
     headers: headers,
     body: body1
   },(err,res,body1) => {
@@ -82,7 +116,7 @@ function LinePushProduct(productList)
   productList.forEach(i => {
     msgEx.push({
       type:"text",
-      text:i.deposit_type_code
+      text: "code : " + i.deposit_type_code + " description : " + i.local_description
     })
   });
   
@@ -103,8 +137,6 @@ function reply(replyToken,msg){
     'Content-Type': 'application/json',
     'Authorization' : 'Bearer 1/B0JKb0SkxFfgDOBy1T+DeXfWwypgAc6SI00dT92fb2VGTGw92YrtpkP6O1P5uuz1F6K/2sECRTxbbKjDyJm/9pVDzc79VAJAfg2esirZ7RhlCzEQALWMqBuYj16UHxAtpL3E7+kwISr4laiwS8rwdB04t89/1O/w1cDnyilFU='
   }
-
-  
 
   if(msg.type == 'sticker'){
     var body  = JSON.stringify({
