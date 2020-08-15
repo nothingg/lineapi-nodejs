@@ -31,60 +31,11 @@ app.post('/webhooks',(req,res) => {
   res.send('Hi');
 })
 
-/* INQ Product*/
+
+
+
+/* INQ Product */
 app.post('/webhook',(req,res) => {
-  let msg = req.body.events[0].message;
-  let replyToken = req.body.events[0].replyToken;
-
-  let userIDToken = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImF1dGgiOiJST0xFX0FETUlOLFJPTEVfVVNFUiIsImV4cCI6MTU5OTk5NzAyN30.mF00sfcPgRdoqTyjOf3DVzVXRuKPBm0axyz-P0FT1g2-c5SIXWqj00FVwNT5D2IDRFfEXjLw7VQuPd63gosKzw";
-  if( msg = "Product" ){
-    let userProduct = getProduct(userIDToken );
-
-    console.log(userProduct);
-
-  }
-
-})  
-
-function  getProduct(userIDToken){
-  let headers = {
-    'Content-Type': 'application/json',
-    'Authorization' : 'Bearer '+ userIDToken
-  };
-  let body = JSON.stringify({token: "0a8ae57106f361d288e48f5c63ef9e7f"});
-  //let jsonObj ;
-  
-  /*
-  request.post({
-    url:'http://apitest.ghb.co.th/api/openSaving/getParameters',
-    headers: headers,
-    body:body
-  },(err,res,body) => {
-    if(res.statusCode == 200){
-      jsonObj = JSON.parse(res.body);
-      console.log('success');
-    }else{
-      jsonObj = null;
-    }
-  })*/
-  
-  request.post({
-    url:'http://apitest.ghb.co.th/api/openSaving/getParameters',
-    headers: headers,
-    body: body
-  },(err,res,body) => {
-    if(res.statusCode == 200){
-      console.log('success');
-      return JSON.parse(res.body);
-    }
-  })
-  
-}
-
-
-
-/* API OpenAccount */
-app.get('/getParameters',(req,res) => {
   let headers = {
     'Content-Type': 'application/json',
     'Authorization' : 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImF1dGgiOiJST0xFX0FETUlOLFJPTEVfVVNFUiIsImV4cCI6MTU5OTk5NzAyN30.mF00sfcPgRdoqTyjOf3DVzVXRuKPBm0axyz-P0FT1g2-c5SIXWqj00FVwNT5D2IDRFfEXjLw7VQuPd63gosKzw'
